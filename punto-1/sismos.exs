@@ -58,13 +58,13 @@ defmodule Sismos do
 
   #-----------------------------------------------------------------
 
-  defp parsear([], acc, rechazados, _f) do
+  def parsear([], acc, rechazados, _f) do
     #con una lista vacia, reorganizamos acc, _f no se usa en este caso pero sirbe para el pathern machine
     {Enum.reverse(acc), rechazados}
 
   end
 
-  defp parsear([linea | resto], acc, rechazados, f) do
+  def parsear([linea | resto], acc, rechazados, f) do
     #limpiamos
     linea = String.trim(linea)
 
@@ -89,7 +89,7 @@ defmodule Sismos do
     end
   end
 
-  defp parsear_ciudades(lineas) do
+  def parsear_ciudades(lineas) do
     parsear(lineas, [], 0, &parsear_ciudad/1)
     #lineas del archivo, acumulador vacio, contador de rechazados, puntero a funcion (una sola funcion de recorrido para dos validaciones)
     #{lista ciudades, rechazados}
@@ -103,7 +103,7 @@ defmodule Sismos do
       [id, nombre, habitantes] when id != "" and nombre != "" and habitantes != "" ->
         #verifica que no hallan espacios vacios y solo hallan 3 espacios
 
-        case Integuer.parse(habitantes) do
+        case Integer.parse(habitantes) do
           {n, ""} when n > 0 ->
             {:ok, %Ciudad{id: id, nombre: nombre, habitantes: n}}
             #verifica entonces que los habitantes sean validos, numeros matores a 0
@@ -116,7 +116,7 @@ defmodule Sismos do
     end
   end
 
-  defp parsear_movimientos(lineas, ids_validos) do
+  def parsear_movimientos(lineas, ids_validos) do
     #reibe ids validos de ciudades como MapSet
     parsear(lineas, [], 0, fn linea ->
       case parsear_movimiento(linea) do
@@ -290,7 +290,7 @@ defmodule Sismos do
 
 
   #si [] esta vacio, retorna le texto
-  defp reporte_ciudad(ciudad, []), do:
+  def reporte_ciudad(ciudad, []), do:
   """
   #{ciudad.nombre} (#{ciudad.habitantes} habitantes)
     Sin movimientos registrados
@@ -298,7 +298,7 @@ defmodule Sismos do
   """
 
   #calcula %{total, max, prom} con recurcion
-  defp reporte_ciudad(c, movs) do
+  def reporte_ciudad(c, movs) do
     est = calcular_estadisticas(movs)
 
     detalle = Enum.map_join(movs, "\n", fn m ->

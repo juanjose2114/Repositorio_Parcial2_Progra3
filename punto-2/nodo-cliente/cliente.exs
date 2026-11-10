@@ -4,7 +4,7 @@ defmodule Cliente do
     defstruct [:nombre, :nodo]
   end
 
-  def iniciar do
+  def main do
     Process.register(self(), :servicio_respuesta)
 
     #Crear el usuario

@@ -1,27 +1,21 @@
 Code.require_file(Path.join(__DIR__, "../../punto-1/sismos.exs"))
-#traemos codigo del punto 1 para evitar duplicar trabajo innecesariamente
 
 defmodule Servidor do
   @ruta_ciudades Path.join(__DIR__, "resources/ciudades.txt")
   @ruta_movimientos Path.join(__DIR__, "resources/movimientos.txt")
 
-  #structure usuario
   defmodule Usuario do
     defstruct [:id, :nombre]
   end
 
   def main do
     Process.register(self(), :servicio_sismos)
-
     IO.puts("Nodo servidor #{Node.self()} escuchando como :servicio_sismos")
     atender_solicitudes()
   end
 
-  #loop que atiende solicitudes
   defp atender_solicitudes do
-    #{destino de solicitud, que se solicita}
     receive do
-
       {destino, {:reporte_ciudad, id_ciudad}} ->
         IO.puts("peticion reporte de ciudad")
         send(destino, reporte_ciudad(id_ciudad))
@@ -29,35 +23,48 @@ defmodule Servidor do
 
       {destino, :reporte_general} ->
         IO.puts("peticion reporte general")
-        send(destino, reporte_general())
+        send(destino, procesar_reporte_general())
         atender_solicitudes()
 
       {destino, :fin} ->
         IO.puts("fin")
         send(destino, :fin)
-        atender_solicitudes() #espera nuevos usuarios
+        atender_solicitudes()
     end
   end
 
   defp reporte_ciudad(id_ciudad) do
     case leer_datos() do
-      {:ok, datos} -> Sismos.reporte_ciudad(datos, id_ciudad)
-      {:error, mensaje} -> mensaje
+      {:ok, %{ciudades: {:ok, lc}, movimientos: {:ok, lm}}} ->
+        {ciudades, _} = Sismos.parsear_ciudades(lc)
+        ids = MapSet.new(Enum.map(ciudades, & &1.id))
+        {movs, _} = Sismos.parsear_movimientos(lm, ids)
+
+        case Enum.find(ciudades, fn c -> c.id == id_ciudad end) do
+          nil ->
+            "La ciudad no está registrada"
+          ciudad ->
+            movs_ciudad = Enum.filter(movs, fn m -> m.id_ciudad == id_ciudad end)
+            # IMPORTANTE: Requiere que reporte_ciudad sea `def` en sismos.exs
+            Sismos.reporte_ciudad(ciudad, movs_ciudad)
+        end
+
+      {:ok, %{ciudades: {:error, _}}} -> "Error al leer archivo de ciudades"
+      {:ok, %{movimientos: {:error, _}}} -> "Error al leer archivo de movimientos"
     end
   end
 
   defp procesar_reporte_general do
-    resultados = leer_concurrente()
-
-    case {resultados.ciudades, resultados.movimientos} do
-      {{:ok, lc}, {:ok, lm}} ->
+    case leer_datos() do
+      {:ok, %{ciudades: {:ok, lc}, movimientos: {:ok, lm}}} ->
         {ciudades, rech_c} = Sismos.parsear_ciudades(lc)
         ids = MapSet.new(Enum.map(ciudades, & &1.id))
         {movs, rech_m} = Sismos.parsear_movimientos(lm, ids)
+        # IMPORTANTE: Requiere que generar_reporte sea `def` en sismos.exs
         Sismos.generar_reporte(ciudades, movs, rech_c, rech_m)
 
-      {{:error, _}, _} -> "Error al leer archivo de ciudades"
-      {_, {:error, _}} -> "Error al leer archivo de movimientos"
+      {:ok, %{ciudades: {:error, _}}} -> "Error al leer archivo de ciudades"
+      {:ok, %{movimientos: {:error, _}}} -> "Error al leer archivo de movimientos"
     end
   end
 
@@ -68,7 +75,8 @@ defmodule Servidor do
     spawn(fn -> send(coordinador, {ref, :ciudades, leer_archivo(@ruta_ciudades)}) end)
     spawn(fn -> send(coordinador, {ref, :movimientos, leer_archivo(@ruta_movimientos)}) end)
 
-    recibir_resultados(ref, %{})
+    # Envolvemos el resultado final en {:ok, _} para que los case lo atrapen fácil
+    {:ok, recibir_resultados(ref, %{})}
   end
 
   defp recibir_resultados(ref, acc) when map_size(acc) == 2, do: acc
@@ -86,7 +94,6 @@ defmodule Servidor do
       {:error, motivo} -> {:error, motivo}
     end
   end
-
 end
 
 Servidor.main()
