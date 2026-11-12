@@ -32,7 +32,7 @@ defmodule ReporteLocal do
         {movs, rech_m} = Sismos.parsear_movimientos(lm, ids)
         #parcea movimientos contra ids
 
-        reporte = Sismos.generar_reporte(ciudades, movs, rech_c, rech_m)
+        reporte = Sismos.generar_reporte(ciudades, movs, rech_c, rech_m, 304314)
         #genera y guarda el reporte con los datos procesados anteriormente
 
         Util.mostrar_mensaje(reporte)

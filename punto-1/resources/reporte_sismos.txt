@@ -1,39 +1,22 @@
-===== REPORTE DE SISMOS POR CIUDAD =====
+===REPORTE DE SISMOS Filtrados ===
+Armenia (304314 habitantes)
+    S001 | 08:15:02-08:15:18 | mag 3.4 | prof 18.0 km
+    S003 | 11:42:00-11:42:12 | mag 2.8 | prof 10.0 km
+  Total: 2 | Máx: S001 (3.4) | Prom. profundidad: 14.00 km
 
-Ciudad: Armenia
-Habitantes: 304314
-Movimientos:
-  S001 | 08:15:02 - 08:15:18 | Magnitud: 3.4 | Profundidad: 18.00 km
-  S003 | 11:42:00 - 11:42:12 | Magnitud: 2.8 | Profundidad: 10.00 km
-Total de movimientos: 2
-Movimiento de mayor magnitud: S001 - 3.4
-Profundidad promedio: 14.00 km
+Calarcá (78684 habitantes)
+    S002 | 09:30:10-09:30:29 | mag 4.1 | prof 25.0 km
+  Total: 1 | Máx: S002 (4.1) | Prom. profundidad: 25.00 km
 
-Ciudad: Calarcá
-Habitantes: 78684
-Movimientos:
-  S002 | 09:30:10 - 09:30:29 | Magnitud: 4.1 | Profundidad: 25.00 km
-Total de movimientos: 1
-Movimiento de mayor magnitud: S002 - 4.1
-Profundidad promedio: 25.00 km
+Circasia (30941 habitantes)
+  Sin movimientos registrados
+  Total: 0 | Máx: No aplica | Prom. profundidad: No aplica
 
-Ciudad: Circasia
-Habitantes: 30941
-Movimientos: Sin movimientos registrados
-Total de movimientos: 0
-Movimiento de mayor magnitud: No aplica
-Profundidad promedio: No aplica
+Salento (7247 habitantes)
+    S004 | 14:05:00-14:05:20 | mag 3.0 | prof 30.0 km
+  Total: 1 | Máx: S004 (3.0) | Prom. profundidad: 30.00 km
 
-Ciudad: Salento
-Habitantes: 7247
-Movimientos:
-  S004 | 14:05:00 - 14:05:20 | Magnitud: 3.0 | Profundidad: 30.00 km
-Total de movimientos: 1
-Movimiento de mayor magnitud: S004 - 3.0
-Profundidad promedio: 30.00 km
 
 Registros rechazados:
   Ciudades: 1
   Movimientos: 1
-
-reporte inicial super quemado por ia

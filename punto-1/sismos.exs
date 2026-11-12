@@ -272,6 +272,29 @@ defmodule Sismos do
 
   end
 
+
+  #reporte filtrado
+  def generar_reporte(ciudades, movimientos, rech_ciudades, rech_movimientod, hab) do
+    c = Enum.filter(ciudades, fn c -> c.habitantes <= hab end)
+    por_ciudad = agrupar(movimientos)
+
+    cuerpo = Enum.map_join(c, "\n", fn c ->
+                #aplicamos a todas las ciudades la funcion
+                movs = Map.get(por_ciudad, c.id, []) #trae los movimientos de la ciudad del id
+                reporte_ciudad(c, movs) #genera reporte de ciudad
+              end)
+
+    """
+    ===REPORTE DE SISMOS Filtrados ===
+    #{cuerpo}
+
+    Registros rechazados:
+      Ciudades: #{rech_ciudades}
+      Movimientos: #{rech_movimientod}
+    """
+  end
+
+
   #agrupacion recursiva, inicia el acumulador
   defp agrupar(movimientos) do
     agrupar(movimientos, %{})
